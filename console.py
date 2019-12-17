@@ -46,9 +46,9 @@ class HBNBCommand(cmd.Cmd):
                 attribute = list_attr.split("=")
                 name = attribute[0]
                 value = attribute[1]
-                value = value.replace("_", "")
                 if value[0] == '"':
                     value = value.replace('"', "")
+                    value = value.replace("_", " ")
                 elif self.is_int(value):
                     value = int(value)
                 elif self.is_float(value):
