@@ -48,11 +48,11 @@ class HBNBCommand(cmd.Cmd):
                 value = attribute[1]
                 value = value.replace("_", "")
                 if value[0] == '"':
-                    value = value.replace('"', " ")
-                if self.is_float(value):
-                    value = float(value)
-                if self.is_int(value):
+                    value = value.replace('"', "")
+                elif self.is_int(value):
                     value = int(value)
+                elif self.is_float(value):
+                    value = float(value)
                 setattr(obj, name, value)
             obj.save()
             print("{}".format(obj.id))
