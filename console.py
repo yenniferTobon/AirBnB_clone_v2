@@ -36,13 +36,24 @@ class HBNBCommand(cmd.Cmd):
         """Creates a new instance of BaseModel, saves it
         Exceptions:
             SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
-        """
+            NameError: when there is no object taht has the name"""
         try:
             if not line:
                 raise SyntaxError()
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
+            for list_attr in my_list[1:]:
+                attribute = list_attr.split("=")
+                name = attribute[0]
+                value = attribute[1]
+                value = value.replace("_", "")
+                if value[0] == '"':
+                    value = value.replace('"', " ")
+                if self.is_float(value):
+                    value = float(value)
+                if self.is_int(value):
+                    value = int(value)
+                setattr(obj, name, value)
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
@@ -50,9 +61,25 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
 
+    def is_float(self, val):
+        """ test if val is a float """
+        try:
+            float(val)
+            return True
+        except ValueError:
+            return False
+
+    def is_int(self, val):
+        """ test if val is an integer """
+        try:
+            int(val)
+            return True
+        except ValueError:
+            return False
+
     def do_show(self, line):
         """Prints the string representation of an instance
-        Exceptions:
+         Exceptions:
             SyntaxError: when there is no args given
             NameError: when there is no object taht has the name
             IndexError: when there is no id given
