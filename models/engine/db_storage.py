@@ -3,6 +3,10 @@
 from models.base_model import BaseModel, Base
 from models.state import State
 from models.city import City
+from models.user import User
+from models.place import Place
+from models.review import Review
+from models.amenity import Amenity
 from sqlalchemy import Column, Integer
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session
@@ -32,7 +36,7 @@ class DBStorage():
 
         c_dict = {}
         if cls is None:
-            all_cls = ['State', 'City']
+            all_cls = ['State', 'City', 'User', 'Place', 'Review', 'Amenity']
             for classes in all_cls:
                 for obj in self.__session.query(eval(classes)).all():
                     c_dict[type(obj).__name__+"."+obj.id] = obj
