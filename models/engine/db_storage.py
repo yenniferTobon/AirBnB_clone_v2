@@ -37,7 +37,7 @@ class DBStorage():
                 for obj in self.__session.query(eval(classes)).all():
                     c_dict[type(obj).__name__+"."+obj.id] = obj
         else:
-            for obj in self.__session.query(cls).all():
+            for obj in self.__session.query(eval(cls)).all():
                 c_dict[type(obj).__name__+"."+obj.id] = obj
         return c_dict
 
