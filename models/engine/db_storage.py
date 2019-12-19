@@ -30,11 +30,11 @@ class DBStorage():
     def all(self, cls=None):
         """return all objects of type class"""
 
-        all_cls = ['State', 'City']
         c_dict = {}
         if cls is None:
+            all_cls = ['State', 'City']
             for classes in all_cls:
-                for obj in self.__session.query(classes).all():
+                for obj in self.__session.query(eval(classes)).all():
                     c_dict[type(obj).__name__+"."+obj.id] = obj
         else:
             for obj in self.__session.query(cls).all():

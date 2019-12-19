@@ -14,14 +14,14 @@ class State(BaseModel, Base):
     """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-    cities = relationship("City", back_populates="state", cascade="all,delete")
+    cityes = relationship("City", backref="stat", cascade="all,delete")
 
     @property
     def city(self):
         """returns the list of City instances with state_id"""
         all_cities = storage.all(City)
-        cities_list = {}
-        for city in all_cities:
+        cities_list = []
+        for city in all_cities.values():
             if city.state_id == self.id:
                 cities_list.append(city)
         return cities_list
