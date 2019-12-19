@@ -1,0 +1,66 @@
+#!/usr/bin/python3
+"""engine must be linked to the MySQL database"""
+from models.base_model import BaseModel, Base
+from models.state import State
+from models.city import City
+from sqlalchemy import Column, Integer
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+import os
+
+
+class DBStorage():
+    """class to database session"""
+
+    __engine = None
+    __session = None
+
+    def __init__(self):
+        """constructor class """
+
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+            os.getenv('HBNB_MYSQL_USER'), os.getenv('HBNB_MYSQL_PWD'),
+            os.getenv('HBNB_MYSQL_HOST'), os.getenv('HBNB_MYSQL_DB')),
+            pool_pre_ping=True)
+
+        if os.getenv('HBNB_ENV') == "test":
+            Base.metadata.drop_all(self.__engine)
+
+    def all(self, cls=None):
+        """return all objects of type class"""
+
+        all_cls = ['State', 'City']
+        c_dict = {}
+        if cls is None:
+            for classes in all_cls:
+                for obj in self.__session.query(classes).all():
+                    c_dict[type(obj).__name__+"."+obj.id] = obj
+        else:
+            for obj in self.__session.query(cls).all():
+                c_dict[type(obj).__name__+"."+obj.id] = obj
+        return c_dict
+
+    def new(self, obj):
+        """add the object to the current database session"""
+
+        self.__session.add(obj)
+
+    def save(self):
+        """commit all changes of the current database session"""
+
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        """delete from the current database session obj"""
+
+        if obj is not None:
+            self.__session.delete(obj)
+
+    def reload(self):
+        """create all tables in the database"""
+
+        Base.metadata.create_all(self.__engine)
+        factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(factory)
+        self.__session = Session()
