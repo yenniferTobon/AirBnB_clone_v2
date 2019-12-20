@@ -1,11 +1,15 @@
 #!/usr/bin/python3
 """This is the place class"""
+import models
 from models.base_model import BaseModel, Base
+from models.review import Review
+from models.amenity import Amenity
 from sqlalchemy import Column, Integer, Float, String
 from sqlalchemy import DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import os
+
 
 place_amenity = Table('association', Base.metadata,
                       Column('place_id', String(60), ForeignKey('places.id'),
@@ -42,25 +46,27 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    amenity_ids = []
     reviews = relationship("Review", cascade="all, delete", backref="place")
 
     amenityes = relationship("Amenity", secondary=place_amenity,
                              viewonly=False, backref="place_amenities")
 
+    amenity_ids = []
+
     @property
     def amenities(self):
         """returns the list of Review instances"""
-        all_Amenities = storage.all(Amenity)
+        all_Amenities = models.storage.all(Amenity)
         list_Amenity = []
         for amenity in all_Amenities.values():
-            if self.id == amenity_ids:
+            if amenity.id == amenity_ids:
                 list_Amenity.append(amenity)
         return list_Amenity
 
     @amenities.setter
     def amenities(self, obj):
         """handles append method for adding an Amenity.id"""
-        if type(objects) == Amenity:
-            self.append(objects)
-            self.amenity_ids.append(obj)
+        all_amenities = models.storage.all(Amenity)
+        for amenity in all_amenities.values():
+            if eval(amenity.id) == obj:
+                self.amenity_ids.append(obj)
