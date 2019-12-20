@@ -8,7 +8,7 @@ from sqlalchemy import Column, Integer, Float, String
 from sqlalchemy import DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-import os
+from os import getenv
 
 
 place_amenity = Table('association', Base.metadata,
@@ -37,7 +37,7 @@ class Place(BaseModel, Base):
     """
     __tablename__ = 'places'
     city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
-    user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    user_id = Column(String(60), ForeignKey('users.id'), nullxable=False)
     name = Column(String(128), nullable=False)
     description = Column(String(1024), nullable=True)
     number_rooms = Column(Integer, nullable=False, default=0)
@@ -47,25 +47,28 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", cascade="all, delete", backref="place")
-    amenities = relationship("Amenity", secondary=place_amenity,
-                             viewonly=False, backref="place_amenities")
-
     amenity_ids = []
 
-    @property
-    def amenities(self):
-        """returns the list of Review instances"""
-        all_Amenities = models.storage.all(Amenity)
-        list_Amenity = []
-        for amenity in all_Amenities.values():
-            if amenity.id == amenity_ids:
-                list_Amenity.append(amenity)
-        return list_Amenity
+    if getenv("HBNB_TYPE_STORAGE" == "db"):
+        amenities = relationship("Amenity", secondary=place_amenity,
+                                 viewonly=False, backref="place_amenities")
 
-    @amenities.setter
-    def amenities(self, obj):
-        """handles append method for adding an Amenity.id"""
-        all_amenities = models.storage.all(Amenity)
-        for amenity in all_amenities.values():
-            if eval(amenity.id) == obj:
-                self.amenity_ids.append(obj)
+    else:
+
+        @property
+        def amenities(self):
+            """returns the list of Review instances"""
+            all_Amenities = models.storage.all(Amenity)
+            list_Amenity = []
+            for amenity in all_Amenities.values():
+                if amenity.id == amenity_ids:
+                    list_Amenity.append(amenity)
+            return list_Amenity
+
+        @amenities.setter
+        def amenities(self, obj):
+            """handles append method for adding an Amenity.id"""
+            all_amenities = models.storage.all(Amenity)
+            for Amenity in all_amenities.values():
+                if eval(Amenity.id) == obj:
+                    self.amenity_ids.append(obj)
