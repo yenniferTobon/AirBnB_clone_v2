@@ -10,4 +10,7 @@ class Amenity(BaseModel, Base):
         name: input name
     """
     __tablename__ = 'amenities'
-    name = Column(String(128), nullable=False)
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        name = Column(String(128), nullable=False)
+    else:
+        name = ""
