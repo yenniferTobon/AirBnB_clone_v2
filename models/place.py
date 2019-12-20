@@ -1,11 +1,22 @@
 #!/usr/bin/python3
 """This is the place class"""
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, String
+from sqlalchemy import DateTime, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+import os
+
+place_amenity = Table('association', Base.metadata,
+                      Column('place_id', String(60), ForeignKey('places.id'),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey('amenities.id'), primary_key=True,
+                             nullable=False))
 
 
 class Place(BaseModel, Base):
+
     """This is the class for Place
     Attributes:
         city_id: city id
@@ -33,3 +44,23 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
     reviews = relationship("Review", cascade="all, delete", backref="place")
+
+    amenityes = relationship("Amenity", secondary=place_amenity,
+                             viewonly=False, backref="place_amenities")
+
+    @property
+    def amenities(self):
+        """returns the list of Review instances"""
+        all_Amenities = storage.all(Amenity)
+        list_Amenity = []
+        for amenity in all_Amenities.values():
+            if self.id == amenity_ids:
+                list_Amenity.append(amenity)
+        return list_Amenity
+
+    @amenities.setter
+    def amenities(self, obj):
+        """handles append method for adding an Amenity.id"""
+        if type(objects) == Amenity:
+            self.append(objects)
+            self.amenity_ids.append(obj)
