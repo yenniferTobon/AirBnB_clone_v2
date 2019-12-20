@@ -2,6 +2,7 @@
 """This is the amenity class"""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
+form sqlalchemy.orm import relationship
 
 
 class Amenity(BaseModel, Base):
