@@ -68,3 +68,10 @@ class DBStorage():
         factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(factory)
         self.__session = Session()
+
+    def close(self):
+        """Close this Session,
+           This clears all items and ends any
+           transaction in progress
+        """
+        self.__session.close()
